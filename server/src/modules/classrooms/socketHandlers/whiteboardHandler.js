@@ -1,4 +1,4 @@
-import { getOrCreateRoomState, persistRoomState } from "../socket.js";
+import { getOrCreateRoomState, persistRoomState } from "../roomStateManager.js";
 
 export const WHITEBOARD_ERROR_CODES = {
   INVALID_STROKE_PAYLOAD: "INVALID_STROKE_PAYLOAD",
@@ -99,6 +99,19 @@ export const validateExcalidrawElements = (elements) => {
   return { isValid: true, elements };
 };
 
+export const validateWhiteboardStrokePayload = (element) => {
+  if (!element || typeof element !== "object" || Array.isArray(element)) {
+    return {
+      isValid: false,
+      error: safeError(
+        WHITEBOARD_ERROR_CODES.INVALID_STROKE_PAYLOAD,
+        "Invalid whiteboard element payload."
+      ),
+    };
+  }
+  return { isValid: true, element };
+};
+
 export const canClearWhiteboard = (socket) =>
   CLEAR_CANVAS_ROLES.has(socket.data?.user?.role);
 
@@ -124,11 +137,6 @@ export default function registerWhiteboardHandler(io, socket) {
         WHITEBOARD_ERROR_CODES.CLEAR_CANVAS_FORBIDDEN,
         "You are not allowed to clear this whiteboard.",
       );
-      return;
-    }
-
-    if (elements.length === 0 && !canClearWhiteboard(socket)) {
-      emitWhiteboardError(socket, WHITEBOARD_ERROR_CODES.CLEAR_CANVAS_FORBIDDEN, "You are not allowed to clear this whiteboard.");
       return;
     }
 

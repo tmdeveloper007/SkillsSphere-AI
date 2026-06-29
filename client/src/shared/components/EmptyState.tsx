@@ -20,7 +20,7 @@ export interface EmptyStateProps {
  * @param {React.ReactNode} action - Optional action button or element
  * @param {string} className - Extra Tailwind classes for the container
  */
-const EmptyState = ({ 
+const EmptyState: React.FC<EmptyStateProps> = ({ 
   title = "No data found", 
   description, 
   icon = <FolderOpen className="w-16 h-16 text-text-muted mb-6" />,

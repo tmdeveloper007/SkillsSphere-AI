@@ -66,14 +66,16 @@ export const analyzeText = (text) => {
 
   // Hesitation Analysis
   const lowerText = text.toLowerCase();
+  const cleanText = lowerText.replace(/[.,!?]/g, '');
   const words = lowerText.split(/\s+/);
   let hesitationCount = 0;
   
-  words.forEach(word => {
-    // Remove punctuation
-    const cleanWord = word.replace(/[.,!?]/g, '');
-    if (FILLER_WORDS.includes(cleanWord)) {
-      hesitationCount++;
+  FILLER_WORDS.forEach(filler => {
+    // Match whole words/phrases to handle both single and multi-word fillers
+    const regex = new RegExp(`\\b${filler}\\b`, 'g');
+    const matches = cleanText.match(regex);
+    if (matches) {
+      hesitationCount += matches.length;
     }
   });
 

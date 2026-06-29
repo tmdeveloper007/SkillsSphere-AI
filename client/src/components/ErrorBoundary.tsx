@@ -8,9 +8,14 @@ export interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
 
+export interface ErrorBoundaryState {
+  error: Error | null;
+  errorInfo: React.ErrorInfo | null;
+  hasError: boolean;
+}
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
 
     this.state = {
@@ -20,14 +25,14 @@ class ErrorBoundary extends React.Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return {
       error,
       hasError: true,
     };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     this.setState({ errorInfo });
     reportError(error, errorInfo).catch(() => {});
   }
@@ -45,9 +50,7 @@ class ErrorBoundary extends React.Component {
   };
 
   render() {
-    // @ts-expect-error TODO: Fix pervasive types
     const { children } = this.props;
-    // @ts-expect-error TODO: Fix pervasive types
     const { error, errorInfo, hasError } = this.state;
     const showDetails = import.meta.env.DEV && (error || errorInfo);
 
@@ -81,15 +84,12 @@ class ErrorBoundary extends React.Component {
           </p>
           
           <div className="text-left bg-red-50 text-red-900 p-4 rounded-lg mb-6 max-h-64 overflow-y-auto text-xs font-mono">
-            {/* @ts-expect-error TODO: Fix pervasive types */}
             <strong>Error:</strong> {this.state.error?.toString()}
             <br/><br/>
             <strong>Component Stack:</strong>
-            {/* @ts-expect-error TODO: Fix pervasive types */}
             <pre className="whitespace-pre-wrap">{this.state.errorInfo?.componentStack}</pre>
             <br/>
             <strong>Stack Trace:</strong>
-            {/* @ts-expect-error TODO: Fix pervasive types */}
             <pre className="whitespace-pre-wrap">{this.state.error?.stack}</pre>
           </div>
 
@@ -98,7 +98,6 @@ class ErrorBoundary extends React.Component {
           </p>
 
             <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-              {/* @ts-expect-error TODO: Fix pervasive types */}
               <Button
                 onClick={this.handleTryAgain}
                 variant="primary"
@@ -106,7 +105,6 @@ class ErrorBoundary extends React.Component {
               >
                 Try Again
               </Button>
-              {/* @ts-expect-error TODO: Fix pervasive types */}
               <Button
                 onClick={this.handleReload}
                 variant="outline"
